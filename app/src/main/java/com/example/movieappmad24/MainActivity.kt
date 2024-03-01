@@ -1,36 +1,24 @@
 package com.example.movieappmad24
 
 import android.annotation.SuppressLint
-import coil.imageLoader
-import android.graphics.Outline
-import android.graphics.Rect
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,41 +29,29 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.layout.BeyondBoundsLayout
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.example.movieappmad24.models.Movie
 import com.example.movieappmad24.models.getMovies
 import com.example.movieappmad24.ui.theme.MovieAppMAD24Theme
-import org.w3c.dom.Text
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.ContentScale.Companion.FillWidth
+import androidx.compose.ui.platform.LocalContext
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -95,27 +71,73 @@ class MainActivity : ComponentActivity() {
 }
 
 
+@Composable
+fun AppTopBar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .background(color = Color.LightGray),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        Text(
+            text = "Movie App",
+            color = Color.Black,
+            modifier = Modifier.padding(start = 16.dp),
+            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
+        )
+
+    }
+}
+
+@Composable
+fun AppBottomBar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .background(color = Color.LightGray),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        Text(
+            text = "Movie App",
+            color = Color.Black,
+            modifier = Modifier.padding(start = 16.dp),
+            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
+        )
+
+    }
+}
+
 
 
 @Composable
 fun MovieContent() {
     val movies = getMovies()
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        items(movies) { movie ->
-            MovieCard(movie = movie)
-            Spacer(modifier = Modifier.height(16.dp)) // Add spacing between movie cards
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+        ) {
+            items(movies) { movie ->
+                MovieCard(movie = movie)
+                Spacer(modifier = Modifier.height(16.dp)) // Add spacing between movie cards
+            }
         }
     }
 }
 
+
 @Composable
 fun MovieCard(movie: Movie) {
     var expanded by remember { mutableStateOf(false) }
-    val arrowRotation by animateDpAsState(targetValue = if (expanded) 180.dp else 0.dp)
+    //val arrowRotation by animateDpAsState(targetValue = if (expanded) 180.dp else 0.dp)
 
     Card(
         modifier = Modifier
@@ -128,13 +150,12 @@ fun MovieCard(movie: Movie) {
 
             Box(modifier = Modifier)
             {
-                Image(
-                    painter = painterResource(id = R.drawable.movie_image), // Placeholder image
-                    contentDescription = "Movie Image",
+                AsyncImage(
+                    model = movie.images[0],
+                    contentDescription = null,
+                    contentScale = FillWidth,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    contentScale = ContentScale.Crop
+                        .aspectRatio(ratio =19f / 7f)
                 )
                 Icon(
                     imageVector = Icons.Default.FavoriteBorder,
@@ -147,9 +168,8 @@ fun MovieCard(movie: Movie) {
                         .offset(x = (-15).dp, y = 15.dp)
                 )
             }
-
             }
-            
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -218,46 +238,6 @@ fun MovieCard(movie: Movie) {
     }
 }
 
-
-@Composable
-fun AppBottomBar() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .background(color = Color.LightGray),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        Text(
-            text = "Movie App",
-            color = Color.Black,
-            modifier = Modifier.padding(start = 16.dp),
-            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
-        )
-
-    }
-}
-
-@Composable
-fun AppTopBar() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .background(color = Color.LightGray),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        Text(
-            text = "Movie App",
-            color = Color.Black,
-            modifier = Modifier.padding(start = 16.dp),
-            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
-        )
-
-    }
-}
 
 
 
