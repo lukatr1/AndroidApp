@@ -41,7 +41,10 @@ import com.example.movieappmad24.models.getMovies
 import com.example.movieappmad24.ui.theme.MovieAppMAD24Theme
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +52,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ContentScale.Companion.FillWidth
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
@@ -61,57 +65,79 @@ class MainActivity : ComponentActivity() {
             MovieAppMAD24Theme {
                 Scaffold(
                     topBar = { AppTopBar() },
+
                     bottomBar = { AppBottomBar() }
                 ) {
                     MovieContent()
+
                 }
             }
         }
     }
 }
-
-
 @Composable
 fun AppTopBar() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(60.dp)
             .background(color = Color.LightGray),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         Text(
-            text = "Movie App",
+            text = "Cinemate",
             color = Color.Black,
             modifier = Modifier.padding(start = 16.dp),
             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
         )
-
     }
 }
-
 @Composable
 fun AppBottomBar() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(70.dp)
             .background(color = Color.LightGray),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround
+        horizontalArrangement = Arrangement.SpaceEvenly // Adjusted to evenly distribute space
     ) {
-        Text(
-            text = "Movie App",
-            color = Color.Black,
-            modifier = Modifier.padding(start = 16.dp),
-            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
-        )
-
+        // Home Icon and Text
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.weight(1f)
+        ) {
+            Icon(
+                tint = Color.Black,
+                imageVector = Icons.Default.Home,
+                contentDescription = "Home"
+            )
+            Text(
+                text = "Home",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Black
+            )
+        }
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.weight(1f)
+        ) {
+            Icon(
+                tint = Color.Black,
+                imageVector = Icons.Default.Star,
+                contentDescription = "Watchlist"
+            )
+            Text(
+                text = "Watchlist",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Black
+            )
+        }
     }
 }
-
-
 
 @Composable
 fun MovieContent() {
@@ -119,7 +145,7 @@ fun MovieContent() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp, vertical = 65.dp)
     ) {
         LazyColumn(
             modifier = Modifier
@@ -127,7 +153,7 @@ fun MovieContent() {
         ) {
             items(movies) { movie ->
                 MovieCard(movie = movie)
-                Spacer(modifier = Modifier.height(16.dp)) // Add spacing between movie cards
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
